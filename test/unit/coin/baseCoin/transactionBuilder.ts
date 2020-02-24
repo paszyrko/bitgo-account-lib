@@ -1,7 +1,7 @@
-import { TestTransactionBuilder } from '../../../resources/testTransactionBuilder';
-import sinon = require('sinon');
-import { TestTransaction } from '../../../resources/testTransaction';
+import sinon from 'sinon';
 import * as should from 'should';
+import { TestTransactionBuilder } from '../../../resources/testTransactionBuilder';
+import { TestTransaction } from '../../../resources/testTransaction';
 
 describe('Transaction builder', () => {
   let txBuilder;
