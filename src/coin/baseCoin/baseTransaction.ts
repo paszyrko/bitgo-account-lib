@@ -9,7 +9,6 @@ export abstract class BaseTransaction {
   protected _id: string; // The transaction id as seen in the blockchain
   protected _inputs: Entry[];
   protected _outputs: Entry[];
-  protected _outputs1: Entry[];
   protected _type: TransactionType;
   protected _signatures: string[];
 
@@ -18,7 +17,11 @@ export abstract class BaseTransaction {
    *
    * @param _coinConfig BaseCoin from statics library
    */
-  protected constructor(protected _coinConfig: Readonly<CoinConfig>) {}
+  protected constructor(protected _coinConfig: Readonly<CoinConfig>) {
+    this._inputs = [];
+    this._outputs = [];
+    this._signatures = [];
+  }
 
   /**
    * Get the transaction id as seen in the blockchain. Transactions computed offline may not have an
