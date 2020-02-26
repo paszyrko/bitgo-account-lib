@@ -1,5 +1,5 @@
 import sinon from 'sinon';
-import * as should from 'should';
+import should from 'should';
 import { TestTransactionBuilder } from '../../../resources/testTransactionBuilder';
 import { TestTransaction } from '../../../resources/testTransaction';
 
