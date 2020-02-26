@@ -25,23 +25,30 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   private _transaction: Transaction;
   private _fee: Fee;
   private _type: TransactionType = TransactionType.Send;
-  private _revealSource = false;
+  private _revealSource;
   private _sourceAddress: string;
   private _sourceKeyPair?: KeyPair;
-  private _multisigSignerKeyPairs: KeyPair[] = [];
+  private _multisigSignerKeyPairs: KeyPair[];
   private _counter: BigNumber;
   private _initialBalance: string;
   private _blockHeader: string;
-  private _transfers: TransferBuilder[] = [];
+  private _transfers: TransferBuilder[];
 
   // Initialization transaction parameters
-  private _owner: string[] = [];
+  private _owner: string[];
 
   /**
    * Public constructor.
+   *
+   * @param _coinConfig
    */
   constructor(_coinConfig: Readonly<CoinConfig>) {
     super(_coinConfig);
+    this._revealSource = false;
+    this._multisigSignerKeyPairs = [];
+    this._counter = new BigNumber(0);
+    this._transfers = [];
+    this._owner = [];
     this.transaction = new Transaction(_coinConfig);
   }
 
