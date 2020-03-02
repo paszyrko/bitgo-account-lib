@@ -1,5 +1,5 @@
 import * as base58check from 'bs58check';
-import sodium from 'libsodium-wrappers';
+import * as sodium from 'sodium-native';
 import { InMemorySigner } from '@taquito/signer';
 import { SigningError } from '../baseCoin/errors';
 import { genericMultisigDataToSign } from '../../../resources/xtz/multisig';
@@ -28,9 +28,10 @@ export function base58encode(prefix: Buffer, payload: Buffer): string {
  * @returns {Promise<string>} The transaction id
  */
 export async function calculateTransactionId(encodedTransaction: string): Promise<string> {
-  await sodium.ready;
   const encodedTransactionBuffer = Uint8Array.from(Buffer.from(encodedTransaction, 'hex'));
-  const operationHashPayload = sodium.crypto_generichash(32, encodedTransactionBuffer);
+  const operationHashPayload = Buffer.alloc(sodium.crypto_generichash_BYTES);
+  sodium.crypto_generichash(operationHashPayload, encodedTransactionBuffer);
+
   return base58encode(this.hashTypes.o.prefix, Buffer.from(operationHashPayload));
 }
 
@@ -57,8 +58,9 @@ export async function calculateOriginatedAddress(transactionId: string, index: n
     index & 0x000000ff,
   ]);
 
-  await sodium.ready;
-  const payload = sodium.crypto_generichash(20, new Uint8Array(tt));
+  const payload = Buffer.alloc(20);
+  sodium.crypto_generichash(payload, new Uint8Array(tt));
+
   return base58encode(this.hashTypes.KT.prefix, Buffer.from(payload));
 }
 
