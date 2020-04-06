@@ -1,5 +1,4 @@
 import BN = require('bn.js');
-import { Buffer } from 'buffer';
 
 /**
  * Any object that can be transformed into a `Buffer`
