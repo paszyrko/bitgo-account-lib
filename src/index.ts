@@ -22,6 +22,10 @@ const coinBuilderMap = {
   ttrx: Trx.TransactionBuilder,
   xtz: Xtz.TransactionBuilder,
   txtz: Xtz.TransactionBuilder,
+  eth: Eth.TransactionBuilder,
+  teth: Eth.TransactionBuilder,
+  etc: Eth.TransactionBuilder,
+  tetc: Eth.TransactionBuilder,
   rsk: Eth.TransactionBuilder,
   trsk: Eth.TransactionBuilder,
 };
@@ -43,5 +47,6 @@ export function getBuilder(coinName: string): BaseTransactionBuilder {
   if (!builderClass) {
     throw new BuildTransactionError(`Coin ${coinName} not supported`);
   }
+  //TODO: Ask if coin == 'rsk' or coin == 'etc' is eth
   return new builderClass(coins.get(coin));
 }

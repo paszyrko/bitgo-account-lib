@@ -23,21 +23,16 @@ export class KeyPair {
    *     (extended, compressed, or uncompressed)
    */
   constructor(source?: KeyPairOptions) {
-    if (!source) {
-      const seed = crypto.randomBytes(DEFAULT_SEED_SIZE_BYTES);
-      this.hdNode = HDNode.fromSeedBuffer(seed);
-    } else if (isSeed(source)) {
-      this.hdNode = HDNode.fromSeedBuffer(source.seed);
-    } else if (isPrivateKey(source)) {
-      this.recordKeysFromPrivateKey(source.prv);
-    } else if (isPublicKey(source)) {
-      this.recordKeysFromPublicKey(source.pub);
+    if (source) {
+      if (isPrivateKey(source)) {
+        this.recordKeysFromPrivateKey(source.prv);
+      } else if (isPublicKey(source)) {
+        this.recordKeysFromPublicKey(source.pub);
+      } else {
+        throw new Error('Invalid key pair options');
+      }
     } else {
       throw new Error('Invalid key pair options');
-    }
-
-    if (this.hdNode) {
-      this.keyPair = this.hdNode.keyPair;
     }
   }
 
@@ -118,7 +113,7 @@ export class KeyPair {
    * @param format
    */
   getAddress(format?: AddressFormat): string {
-    const { pub } = this.getKeys();
+    const { pub } = this.getKeys(); //TODO: Implement get address from prv and pub
     return pub;
   }
 }
