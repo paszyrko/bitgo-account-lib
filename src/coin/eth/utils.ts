@@ -1,7 +1,9 @@
 import { Buffer } from 'buffer';
 import assert from 'assert';
+import keccak256 from 'keccak256';
 import BN from 'bn.js';
 import Web3 from 'web3';
+import _ from 'underscore';
 import { FieldData } from './iface';
 
 export type ByteArray = number[];
@@ -16,6 +18,7 @@ const web3 = new Web3('https://public-node.testnet.rsk.co'); //TODO: This hardco
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export async function sign(): Promise<void> {
   //TODO: Remove eslint-disable-next-line when implementing this method
+  //TODO link with signature
 }
 
 /**
@@ -37,19 +40,115 @@ export function getContractData(args: string[]): string {
 /**
  * Returns whether or not the string is a valid Eth address
  *
- * @param {string} hash - the address to validate
+ * @param {string} address - the address to validate
  * @returns {boolean} - the validation result
  */
-export function isValidAddress(hash: string): boolean {
-  //TODO: implement Eth address validation
-  console.log(hash);
+export function isValidAddress(address: string): boolean {
+  // check if it has the basic requirements of an address
+  if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+    return false;
+    // If it's ALL lowercase or ALL upppercase
+  } else if (/^(0x|0X)?[0-9a-f]{40}$/.test(address) || /^(0x|0X)?[0-9A-F]{40}$/.test(address)) {
+    return true;
+    // Otherwise check each case
+  } else {
+    return checkAddressChecksum(address);
+  }
+}
+
+/**
+ * Checks if the given string is a checksummed address
+ *
+ * @function checkAddressChecksum
+ * @param {string} address the given HEX address
+ * @returns {boolean}
+ */
+function checkAddressChecksum(address: string): boolean {
+  // Check each case
+  address = address.replace(/^0x/i, '');
+  const addressHash = sha3(address.toLowerCase()).replace(/^0x/i, '');
+  for (let i = 0; i < 40; i++) {
+    // the nth letter should be uppercase if the nth digit of casemap is 1
+    if (
+      (parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i]) ||
+      (parseInt(addressHash[i], 16) <= 7 && address[i].toLowerCase() !== address[i])
+    ) {
+      console.log('Pablo 5');
+      return false;
+    }
+  }
   return true;
+}
+
+/**
+ * Check if string is HEX, requires a 0x in front
+ *
+ * @function isHexStrict
+ * @param {string} hex to be checked
+ * @returns {boolean}
+ */
+function isHexStrict(hex: any): boolean {
+  return (_.isString(hex) || _.isNumber(hex)) && /^(-)?0x[0-9a-f]*$/i.test(hex);
+}
+
+/**
+ * Hashes values to a sha3 hash using keccak 256
+ *
+ * To hash a HEX string the hex must have 0x in front.
+ *
+ * @function sha3
+ * @returns {string} the sha3 string
+ */
+const SHA3_NULL_S = '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470';
+
+/**
+ * @param value
+ */
+function sha3(value: any): string {
+  if (BN.isBN(value)) {
+    value = value.toString();
+  }
+
+  if (isHexStrict(value) && /^0x/i.test(value.toString())) {
+    value = hexToBytes(value);
+  }
+
+  const returnValue = keccak256(value).toString('hex');
+
+  if (returnValue !== SHA3_NULL_S) {
+    return '';
+  } else {
+    return returnValue;
+  }
+}
+
+/**
+ * Convert a hex string to a byte array
+ *
+ * Note: Implementation from crypto-js
+ *
+ * @function hexToBytes
+ * @param {string} hex
+ * @returns {Array} the byte array
+ */
+function hexToBytes(hex: any): ByteArray {
+  hex = hex.toString(16);
+
+  if (!isHexStrict(hex)) {
+    throw new Error('Given value "' + hex + '" is not a valid hex string.');
+  }
+
+  hex = hex.replace(/^0x/i, '');
+  let bytes: ByteArray = [];
+  let c = 0;
+  for (bytes = [], c = 0; c < hex.length; c += 2) bytes.push(parseInt(hex.substr(c, 2), 16));
+  return bytes;
 }
 
 /**
  * Returns whether or not the string is a valid Eth block hash
  *
- * @param {string} hash - the address to validate
+ * @param {string} hash - the tx hash to validate
  * @returns {boolean} - the validation result
  */
 export function isValidBlockHash(hash: string): boolean {
