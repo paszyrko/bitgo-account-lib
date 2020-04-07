@@ -42,12 +42,23 @@ export function isPublicKey(source: KeyPairOptions): source is PublicKey {
   return (source as PublicKey).pub !== undefined;
 }
 
+export interface Fee {
+  //EXTEND FROM BASEFEE
+  fee: string;
+  gasLimit: string;
+}
+
 export interface Account {
   publicKey: string;
   privateKey: string;
   address: {
     hex: string;
   };
+}
+
+export interface ParsedTransaction {
+  branch: string;
+  contents: Operation[];
 }
 
 export interface Operation {
