@@ -11,6 +11,8 @@ import {
   toBuffer,
   bufferToInt,
   getFieldValue,
+  isValidBlockHash,
+  isValidAddress,
 } from '../../../../src/coin/eth/utils';
 
 const STRING_HEX = '0xa43f0BDd451E39C7AF20426f43589DEFAd4335E6';
@@ -19,6 +21,15 @@ const ARRAY = ['1', '2', '3'];
 
 const FIELD = { allowZero: false, allowLess: true, length: 42, name: '' };
 const BN_ = new BN('dead', 16);
+
+describe('isValidAddress', function() {
+  it('should return valid result', async () => {
+    should.equal(isValidAddress('0xBa8eA9C3729686d7DB120efCfC81cD020C8DC1CB'), true);
+    should.equal(isValidAddress('0xBa8eA9C3729686d7DB120efCfC81cD020C8DC1CP'), false);
+    should.equal(isValidAddress('0xBA8EA9C3729686D7DB120EFCfC81CD020C8DC1CB'), true);
+    should.equal(isValidAddress('A8EA9C3729686D7DB120EFCfC81CD020C8DC1CB'), false);
+  });
+});
 
 describe('Correct string', function() {
   it('should return if the string begin with Ox', async () => {
