@@ -3,9 +3,9 @@ import { getBuilder, Eth } from '../../../../src';
 import should from 'should';
 
 describe('Eth Transaction builder', function() {
-  before(function() {
+  /*before(function() {
     this.skip(); //TODO: Remove this when the tests are fixed
-  });
+  });*/
   const defaultKeyPair = new Eth.KeyPair({
     prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
   });
@@ -18,7 +18,7 @@ describe('Eth Transaction builder', function() {
         fee: '10',
         gasLimit: '1000',
       });
-      txBuilder.chainId(1);
+      txBuilder.chainId(30);
       const source = {
         prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
       };
@@ -36,6 +36,11 @@ describe('Eth Transaction builder', function() {
       //TODO: Add to broadcast format to check if it's possible to send using Web3
 
       tx.type.should.equal(TransactionType.WalletInitialization);
+      const txJson = tx.toJson();
+      txJson.gasLimit.should.equal('1000');
+      txJson.gasPrice.should.equal('10');
+      should.equal(txJson.nonce, 1);
+      should.equal(txJson.chainId, 30);
       //TODO: The source should be set when signing or before
       //tx.source.should.equal('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
       //TODO: check commented asserts to see if they are needed
@@ -54,7 +59,7 @@ describe('Eth Transaction builder', function() {
         fee: '10',
         gasLimit: '1000',
       });
-      txBuilder.chainId(1);
+      txBuilder.chainId(30);
       const source = {
         prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
       };
