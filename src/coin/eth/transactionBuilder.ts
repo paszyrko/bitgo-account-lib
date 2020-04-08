@@ -19,7 +19,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   private _sourceKeyPair: KeyPair;
   private _type: TransactionType;
   private _chainId: number;
-  private _counter: number; //TODO: Check if this needs to be a BigNumber
+  private _counter: number;
   private _fee: Fee;
   private _sourceAddress: string;
 
@@ -37,6 +37,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     this._type = TransactionType.Send;
     this._counter = 0;
     this._walletOwnerAddresses = [];
+    this.transaction = new Transaction(this._coinConfig);
   }
 
   /** @inheritdoc */
@@ -50,11 +51,12 @@ export class TransactionBuilder extends BaseTransactionBuilder {
         transactionData = this.buildWalletInitializationTransaction();
         break;
     }
-    this.transaction = new Transaction(this._coinConfig, transactionData);
     this.transaction.setTransactionType(this._type);
+    this.transaction.setTransactionData(transactionData);
 
     // Build and sign a new transaction based on the latest changes
     if (this._sourceKeyPair && this._sourceKeyPair.getKeys().prv) {
+      console.log('DEBUG: Trying to sign');
       await this.transaction.sign(this._sourceKeyPair);
     }
     return this.transaction;
@@ -75,7 +77,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     if (this._type === TransactionType.WalletInitialization && this._walletOwnerAddresses.length === 0) {
       throw new SigningError('Cannot sign an wallet initialization transaction without owners');
     }
-    //TODO: Check custom index for multiSig when making a Send Transaction Type
+
     if (this._sourceKeyPair) {
       throw new SigningError('Cannot sign multiple times a non send-type transaction');
     }

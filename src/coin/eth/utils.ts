@@ -1,10 +1,13 @@
 import { Buffer } from 'buffer';
 import assert from 'assert';
+import { SigningError } from '../baseCoin/errors';
+import { FieldData, TxData } from './iface';
+import { signTx } from './signature';
+import { KeyPair } from './keyPair';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
 import Web3 from 'web3';
 import _ from 'underscore';
-import { FieldData } from './iface';
 
 export type ByteArray = number[];
 const walletSimpleByteCode = 'contractBytecode';
@@ -14,11 +17,32 @@ const web3 = new Web3('https://public-node.testnet.rsk.co'); //TODO: This hardco
 /**
  * Signs the transaction using the Eth elliptic curve
  *
+ * @param transactionData
+ * @param keyPair
  */
-// eslint-disable-next-line @typescript-eslint/no-empty-function
-export async function sign(): Promise<void> {
-  //TODO: Remove eslint-disable-next-line when implementing this method
-  //TODO link with signature
+export async function sign(transactionData: TxData, keyPair: KeyPair): Promise<string> {
+  if (!keyPair.getKeys().prv) {
+    throw new SigningError('Missing private key');
+  }
+  const chainId = transactionData.chainId != undefined ? bufferToInt(transactionData.chainId as Buffer) : 0;
+  console.log('Chain Id is: ', chainId);
+  console.log('Private key ', keyPair.getKeys().prv);
+  const privateKey = Buffer.from(keyPair.getKeys().prv as string, 'hex');
+  return signTx(formatTransaction(transactionData), chainId, privateKey);
+}
+
+/**
+ * Format transaction to be signed
+ *
+ * @param transactionData
+ */
+function formatTransaction(transactionData: TxData): TxData {
+  return {
+    gasLimit: toHex(transactionData.gasLimit),
+    gasPrice: toHex(transactionData.gasPrice),
+    nonce: toHex(transactionData.nonce),
+    data: transactionData.data,
+  };
 }
 
 /**
@@ -216,6 +240,27 @@ export function isHexString(value: any): boolean {
 export function intToHex(i: any): string {
   var hex = i.toString(16); // eslint-disable-line
   return '0x' + hex;
+}
+
+/**
+ * @param i
+ */
+export function toHex(i: any): string {
+  if (isValidAddress(i)) {
+    return '0x' + i.toLowerCase().replace(/^0x/i);
+  }
+
+  if (Buffer.isBuffer(i)) {
+    return '0x' + i.toString('hex');
+  }
+
+  if (_.isString(i)) {
+    if (i.indexOf('0x') === 0 || i.indexOf('0X') === 0) {
+      return i;
+    }
+  }
+
+  return intToHex(i);
 }
 
 /**

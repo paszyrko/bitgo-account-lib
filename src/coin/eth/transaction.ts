@@ -20,8 +20,16 @@ export class Transaction extends BaseTransaction {
    * @param {Readonly<CoinConfig>} coinConfig
    * @param {TxData} transactionData
    */
-  constructor(coinConfig: Readonly<CoinConfig>, transactionData: TxData) {
+  constructor(coinConfig: Readonly<CoinConfig>) {
     super(coinConfig);
+  }
+
+  /**
+   * Set the transaction data
+   *
+   * @param {TxData} transactionData The transaction data to set
+   */
+  setTransactionData(transactionData: TxData): void {
     this._parsedTransaction = transactionData;
   }
 
@@ -36,7 +44,8 @@ export class Transaction extends BaseTransaction {
 
   /** @inheritdoc */
   canSign(key: BaseKey): boolean {
-    return false; //TODO: implement this validation
+    //TODO: implement this validation for the ethereum network
+    return true;
   }
 
   /**
@@ -50,11 +59,7 @@ export class Transaction extends BaseTransaction {
     if (!this._parsedTransaction) {
       throw new InvalidTransactionError('Empty transaction');
     }
-    // Get the transaction body to sign
-    //TODO: Assign _encodedTransaction using _parsedTransaction data
-    const signedTransaction = await Utils.sign(); //TODO: Implement sign function in utils returning the transaction encoded new value
-    //TODO: Assign signedTransaction value to _encodedTransaction
-    //TODO: Assign _source using the signer address
+    this._encodedTransaction = await Utils.sign(this._parsedTransaction, keyPair);
   }
 
   /** @inheritdoc */
