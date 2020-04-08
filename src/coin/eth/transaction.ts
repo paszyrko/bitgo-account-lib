@@ -1,29 +1,42 @@
 /**
  * Ethereum transaction model
  */
-import { BaseTransaction } from '../baseCoin';
+import { BaseTransaction, TransactionType } from '../baseCoin';
 import { BaseKey } from '../baseCoin/iface';
 import { InvalidTransactionError } from '../baseCoin/errors';
 import { KeyPair } from './keyPair';
-import { ParsedTransaction } from './iface';
+import { TxData } from './iface';
 import { Utils } from './';
 import { BaseCoin as CoinConfig } from '@bitgo/statics/dist/src/base';
 
 export class Transaction extends BaseTransaction {
-  private _parsedTransaction?: ParsedTransaction; // transaction in JSON format
+  private _parsedTransaction?: TxData; // transaction in JSON format
   private _encodedTransaction?: string; // transaction in hex format
   private _source: string;
+
   /**
    * Public constructor.
    *
    * @param {Readonly<CoinConfig>} coinConfig
+   * @param {TxData} transactionData
    */
-  constructor(coinConfig: Readonly<CoinConfig>) {
+  constructor(coinConfig: Readonly<CoinConfig>, transactionData: TxData) {
     super(coinConfig);
+    this._parsedTransaction = transactionData;
   }
 
+  /**
+   * Set the transaction type
+   *
+   * @param {TransactionType} transactionType The transaction type to be set
+   */
+  setTransactionType(transactionType: TransactionType): void {
+    this._type = transactionType;
+  }
+
+  /** @inheritdoc */
   canSign(key: BaseKey): boolean {
-    return false;
+    return false; //TODO: implement this validation
   }
 
   /**
@@ -38,15 +51,25 @@ export class Transaction extends BaseTransaction {
       throw new InvalidTransactionError('Empty transaction');
     }
     // Get the transaction body to sign
-    const encodedTransaction = this._parsedTransaction; //TODO: format the transaction to encoded Buffer
-    const signedTransaction = await Utils.sign(); //TODO: Implement sign function in utils
+    //TODO: Assign _encodedTransaction using _parsedTransaction data
+    const signedTransaction = await Utils.sign(); //TODO: Implement sign function in utils returning the transaction encoded new value
+    //TODO: Assign signedTransaction value to _encodedTransaction
+    //TODO: Assign _source using the signer address
   }
 
+  /** @inheritdoc */
   toBroadcastFormat(): any {
-    return ''; //TODO: Implement toBroadCastFormat for Ethereum
+    if (!this._encodedTransaction) {
+      throw new InvalidTransactionError('Missing encoded transaction');
+    }
+    return this._encodedTransaction;
   }
 
+  /** @inheritdoc */
   toJson(): any {
-    return ''; //TODO: Implement toJson for Ethereum
+    if (!this._parsedTransaction) {
+      throw new InvalidTransactionError('Empty transaction');
+    }
+    return this._parsedTransaction;
   }
 }

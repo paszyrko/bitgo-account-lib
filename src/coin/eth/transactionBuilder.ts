@@ -3,8 +3,8 @@ import { BaseAddress, BaseKey } from '../baseCoin/iface';
 import { Transaction } from '../eth';
 import { BuildTransactionError, SigningError } from '../baseCoin/errors';
 import { KeyPair } from './keyPair';
-import { Fee } from './iface';
-import { isValidAddress, isValidBlockHash } from './utils';
+import { Fee, TxData } from './iface';
+import { isValidAddress, getContractData } from './utils';
 import { BaseCoin as CoinConfig } from '@bitgo/statics/dist/src/base';
 import BigNumber from 'bignumber.js';
 
@@ -18,8 +18,8 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   private _transaction: Transaction;
   private _sourceKeyPair: KeyPair;
   private _type: TransactionType;
-  private _blockHeader: string;
-  private _counter: BigNumber;
+  private _chainId: number;
+  private _counter: number; //TODO: Check if this needs to be a BigNumber
   private _fee: Fee;
   private _sourceAddress: string;
 
@@ -35,23 +35,25 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   constructor(_coinConfig: Readonly<CoinConfig>) {
     super(_coinConfig);
     this._type = TransactionType.Send;
-    this._counter = new BigNumber(0);
+    this._counter = 0;
     this._walletOwnerAddresses = [];
-    this.transaction = new Transaction(_coinConfig);
   }
 
   /** @inheritdoc */
   protected async buildImplementation(): Promise<BaseTransaction> {
+    if (this._type != TransactionType.WalletInitialization) {
+      throw new BuildTransactionError('Unsupported transaction type');
+    }
+    let transactionData;
     switch (this._type) {
       case TransactionType.WalletInitialization:
-        //TODO: It may need something special for wallet initialization
+        transactionData = this.buildWalletInitializationTransaction();
         break;
     }
+    this.transaction = new Transaction(this._coinConfig, transactionData);
+    this.transaction.setTransactionType(this._type);
 
-    this.transaction = new Transaction(this._coinConfig);
     // Build and sign a new transaction based on the latest changes
-    //await this.transaction.initFromParsedTransaction(parsedTransaction);
-
     if (this._sourceKeyPair && this._sourceKeyPair.getKeys().prv) {
       await this.transaction.sign(this._sourceKeyPair);
     }
@@ -62,17 +64,18 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   protected fromImplementation(rawTransaction: string): Transaction {
     // Decoding the transaction is an async operation, so save it and leave the decoding for the
     // build step
-    this._serializedTransaction = rawTransaction;
-    return new Transaction(this._coinConfig);
+    throw new BuildTransactionError('Not implemented fromImplementation'); //TODO: Implement fromImplementation and delete this
   }
 
   protected signImplementation(key: BaseKey): BaseTransaction {
     const signer = new KeyPair({ prv: key.key });
+    if (this._type != TransactionType.WalletInitialization) {
+      throw new SigningError('Cannot sign an unsupported operation'); //TODO: Remove this when other transactions are supported
+    }
     if (this._type === TransactionType.WalletInitialization && this._walletOwnerAddresses.length === 0) {
       throw new SigningError('Cannot sign an wallet initialization transaction without owners');
     }
     //TODO: Check custom index for multiSig when making a Send Transaction Type
-    //TODO: add throw error if type != WalletInitialization
     if (this._sourceKeyPair) {
       throw new SigningError('Cannot sign multiple times a non send-type transaction');
     }
@@ -108,15 +111,12 @@ export class TransactionBuilder extends BaseTransactionBuilder {
 
   // region Common builder methods
   /**
-   * Set the transaction branch id.
+   * Set the transaction chain id.
    *
-   * @param {string} blockId A block hash to use as branch reference
+   * @param {number} chainId A block hash to use as branch reference
    */
-  branch(blockId: string): void {
-    if (!isValidBlockHash(blockId)) {
-      throw new BuildTransactionError('Invalid block hash ' + blockId);
-    }
-    this._blockHeader = blockId;
+  chainId(chainId: number): void {
+    this._chainId = chainId;
   }
 
   /**
@@ -144,10 +144,10 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   /**
    * Set the transaction counter to prevent submitting repeated transactions.
    *
-   * @param {string} counter The counter to use
+   * @param {number} counter The counter to use
    */
-  counter(counter: string): void {
-    this._counter = new BigNumber(counter);
+  counter(counter: number): void {
+    this._counter = counter;
   }
 
   /**
@@ -185,6 +185,21 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     this._walletOwnerAddresses.push(address);
   }
   //endregion
+
+  /**
+   * Build a transaction for a generic multisig contract.
+   *
+   * @returns {TxData} The Ethereum transaction data
+   */
+  private buildWalletInitializationTransaction(): TxData {
+    return {
+      gasLimit: this._fee.gasLimit,
+      gasPrice: this._fee.fee,
+      nonce: this._counter,
+      chainId: this._chainId,
+      data: getContractData(this._walletOwnerAddresses),
+    };
+  }
 
   /** @inheritdoc */
   protected get transaction(): Transaction {
