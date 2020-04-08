@@ -7,8 +7,7 @@ describe('Eth Transaction builder', function() {
     this.skip(); //TODO: Remove this when the tests are fixed
   });
   const defaultKeyPair = new Eth.KeyPair({
-    prv:
-      'xprv9s21ZrQH143K3D8TXfvAJgHVfTEeQNW5Ys9wZtnUZkqPzFzSjbEJrWC1vZ4GnXCvR7rQL2UFX3RSuYeU9MrERm1XBvACow7c36vnz5iYyj2',
+    prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
   });
 
   describe('should build', () => {
@@ -19,33 +18,31 @@ describe('Eth Transaction builder', function() {
         fee: '10',
         gasLimit: '1000',
       });
-      txBuilder.branch('chainId'); //Map chainId to branch
+      txBuilder.chainId(1);
       const source = {
         prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
       };
       const sourceKeyPair = new Eth.KeyPair(source);
-      txBuilder.source(sourceKeyPair.getAddress()); //TODO: Implement get address from prv, is the one that pays the fee
-      txBuilder.counter('0'); //This would be nonce
-      txBuilder.owner(
-        //TODO: change for address or valid public key
-        new Eth.KeyPair({ pub: 'sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b' }).getAddress(),
-      );
-      txBuilder.owner(new Eth.KeyPair({ pub: 'sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b' }).getAddress());
-      txBuilder.owner(new Eth.KeyPair({ pub: 'sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b' }).getAddress());
+      //TODO: Implement get address from prv, is the one that pays the fee
+      // to use sourceKeyPair.getAddress()
+      txBuilder.source('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      txBuilder.counter(1); //This would be the nonce
+      //TODO: Implement get address from pub
+      // to use new Eth.KeyPair({ pub: 'sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b' }).getAddress()
+      txBuilder.owner('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      txBuilder.owner('0x7325A3F7d4f9E86AE62Cf742426078C3755730d5');
+      txBuilder.owner('0x603e077acd3F01e81b95fB92ce42FF60dFf3D4C7');
       const tx = await txBuilder.build(); //build without sign
       //TODO: Add to broadcast format to check if it's possible to send using Web3
 
-      tx.id.should.equal('');
       tx.type.should.equal(TransactionType.WalletInitialization);
-      tx.source.should.equal(''); //TODO: Add calculated getAddress()
-      should.equal(tx.inputs.length, 1);
-      should.equal(tx.outputs.length, 1);
-      tx.inputs[0].address.should.equal(''); //TODO: Add calculated getAddress()
-      tx.inputs[0].value.should.equal('1000010'); //TODO: Check if it's related to initial balance and fee
-      tx.outputs[0].address.should.equal('');
-      tx.outputs[0].value.should.equal('1000000');
-      tx.signature.length.should.equal(0);
-      Object.keys(tx.getIndexesByTransactionType()).length.should.equal(1);
+      //TODO: The source should be set when signing or before
+      //tx.source.should.equal('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      //TODO: check commented asserts to see if they are needed
+      //should.equal(tx.inputs.length, 1);
+      //should.equal(tx.outputs.length, 1);
+      //TODO: Add the signatures
+      //tx.signature.length.should.equal(0);
     });
   });
 
@@ -57,33 +54,32 @@ describe('Eth Transaction builder', function() {
         fee: '10',
         gasLimit: '1000',
       });
-      txBuilder.branch('chainId'); //Map chainId to branch
+      txBuilder.chainId(1);
       const source = {
         prv: '8CAA00AE63638B0542A304823D66D96FF317A576F692663DB2F85E60FAB2590C',
       };
       const sourceKeyPair = new Eth.KeyPair(source);
-      txBuilder.source(sourceKeyPair.getAddress()); //TODO: Implement get address from prv
-      txBuilder.counter('0'); //This would be nonce
-      txBuilder.owner('sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b');
-      txBuilder.owner('sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b');
-      txBuilder.owner('sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b');
+      //TODO: Implement get address from prv, is the one that pays the fee
+      // to use sourceKeyPair.getAddress()
+      txBuilder.source('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      txBuilder.counter(1); //This would be the nonce
+      //TODO: Implement get address from pub
+      // to use new Eth.KeyPair({ pub: 'sppk7ZWB8diU2TWehxdkWCV2DTFvn1hPz4qLjiD3nJQozKnoSEnSC8b' }).getAddress()
+      txBuilder.owner('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      txBuilder.owner('0x7325A3F7d4f9E86AE62Cf742426078C3755730d5');
+      txBuilder.owner('0x603e077acd3F01e81b95fB92ce42FF60dFf3D4C7');
       txBuilder.sign({ key: defaultKeyPair.getKeys().prv });
       const tx = await txBuilder.build(); //shoud build and sign
       //TODO: Add to broadcast format to check if it's possible to send using Web3
-      tx.id.should.equal('opNfjjEfWk7HsnY8fQrUoPFuXZfABweubA6D4bVScmqoVzcZVFA');
+
       tx.type.should.equal(TransactionType.WalletInitialization);
-      tx.source.should.equal('tz2PtJ9zgEgFVTRqy6GXsst54tH3ksEnYvvS');
-      should.equal(tx.inputs.length, 1);
-      should.equal(tx.outputs.length, 1);
-      tx.inputs[0].address.should.equal('tz2PtJ9zgEgFVTRqy6GXsst54tH3ksEnYvvS');
-      tx.inputs[0].value.should.equal('1004764');
-      tx.outputs[0].address.should.equal('KT1J9LfhDV6FQxR7aMaK7R6Rw8mBpfhP5MA3');
-      tx.outputs[0].value.should.equal('1000000');
-      tx.signature.length.should.equal(1);
-      tx.signature[0].should.equal(
-        'sigVD57haAMCobHrCwH9ABfbFvdmyR9ZspZC3Zihb9tEPfhtzCKS1F8fLoVpodvor3PUoo7ry4j46xYETEzELmtnrNTaTPX4',
-      );
-      Object.keys(tx.getIndexesByTransactionType()).length.should.equal(1);
+      //TODO: The source should be set when signing or before
+      //tx.source.should.equal('0x386Fe4E3D2b6Acce93CC13d06e92B00aa50F429c');
+      //TODO: check commented asserts to see if they are needed
+      //should.equal(tx.inputs.length, 1);
+      //should.equal(tx.outputs.length, 1);
+      //TODO: Add the signatures
+      //tx.signature.length.should.equal(0);
     });
   });
 });

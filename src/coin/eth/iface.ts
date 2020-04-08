@@ -1,4 +1,5 @@
 import BN = require('bn.js');
+import { BaseFee } from '../baseCoin/iface';
 
 /**
  * An Ethereum private key in extended or raw format
@@ -44,9 +45,7 @@ export function isPublicKey(source: KeyPairOptions): source is PublicKey {
   return (source as PublicKey).pub !== undefined;
 }
 
-export interface Fee {
-  //EXTEND FROM BASEFEE
-  fee: string;
+export interface Fee extends BaseFee {
   gasLimit: string;
 }
 
@@ -64,18 +63,6 @@ export interface ParsedTransaction {
 }
 
 export interface Operation {
-  to: string;
-  dataToSign?: string;
-  gas_limit: string;
-  gas_price: string;
-  counter?: string;
-}
-
-/**
- * Send transaction information
- */
-export interface TransferData {
-  amount: string;
   to: string;
   dataToSign?: string;
   gas_limit: string;
