@@ -1,6 +1,10 @@
 import should from 'should';
 import BN from 'bn.js';
 import {
+  sign,
+  getContractData,
+  isValidAddress,
+  isValidBlockHash,
   padToEven,
   isHexPrefixed,
   stripHexPrefix,
@@ -10,17 +14,17 @@ import {
   intToBuffer,
   toBuffer,
   bufferToInt,
-  getFieldValue,
-  isValidBlockHash,
-  isValidAddress,
+  getFieldValue
 } from '../../../../src/coin/eth/utils';
 
 const STRING_HEX = '0xa43f0BDd451E39C7AF20426f43589DEFAd4335E6';
 const STRING_NO_HEX = 'a43f0BDd451E39C7AF20426f43589DEFAd4335E6';
+const STRING_ZEROS = '0x000f0BDd451E39C7AF20426f43589DEFAd4335E6'
+const STRING_WITHOUT_ZEROS = 'f0BDd451E39C7AF20426f43589DEFAd4335E6'
 const ARRAY = ['1', '2', '3'];
-
-const FIELD = { allowZero: false, allowLess: true, length: 42, name: '' };
-const BN_ = new BN('dead', 16);
+const FIELD = { allowZero: false, allowLess: true, length: 4, name: 'gasLimit' };
+const BN_ = new BN('18446744073709551615'); 
+const BUFFER = new Buffer(['04','00']);
 
 describe('isValidAddress', function() {
   it('should return valid result', async () => {
@@ -47,6 +51,9 @@ describe('Correct string', function() {
   it('should return an even length string', async () => {
     should.equal(padToEven('123'), '0123');
   });
+  it('should strip zeros',async() =>{
+    should.equal(stripZeros(STRING_ZEROS),STRING_WITHOUT_ZEROS);
+});
 });
 
 describe('Correct buffer', function() {
@@ -59,4 +66,17 @@ describe('Correct buffer', function() {
 
 describe('Obtain field value', function() {
   should.equal(getFieldValue(0, FIELD).toString(), '');
+});
+describe('Correct conversion', function(){
+  it('should convert to hex', async() => {
+    should.equal(intToHex(1000),'0x3e8');
+  });
+  it('should convert int to buffer', async() => {
+    should.equal(Buffer.isBuffer(intToBuffer(1234)), true);
+  });
+  it('should convert buffer to int', async() => {
+    should.equal(bufferToInt(BUFFER),1024);
+  });
+  
+ 
 });
