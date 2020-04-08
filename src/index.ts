@@ -24,10 +24,6 @@ const coinBuilderMap = {
   txtz: Xtz.TransactionBuilder,
   eth: Eth.TransactionBuilder,
   teth: Eth.TransactionBuilder,
-  etc: Eth.TransactionBuilder,
-  tetc: Eth.TransactionBuilder,
-  rsk: Eth.TransactionBuilder,
-  trsk: Eth.TransactionBuilder,
 };
 
 /**
@@ -42,11 +38,27 @@ export const supportedCoins = Object.keys(coinBuilderMap);
  * @returns An instance of a {@code TransactionBuilder}
  */
 export function getBuilder(coinName: string): BaseTransactionBuilder {
-  const coin = coinName.toLowerCase().trim();
+  const coin = tryMapToEthFamilyCoin(coinName.toLowerCase().trim());
   const builderClass = coinBuilderMap[coin];
   if (!builderClass) {
     throw new BuildTransactionError(`Coin ${coinName} not supported`);
   }
-  //TODO: Ask if coin == 'rsk' or coin == 'etc' is eth
+
   return new builderClass(coins.get(coin));
+}
+
+/**
+ * Get a transaction builder for the given coin.
+ *
+ * @param {string} coin The coin name
+ * @returns {string} The same coin or eth if it's compatible
+ */
+function tryMapToEthFamilyCoin(coin: string): string {
+  switch (coin) {
+    case 'rsk':
+    case 'etc':
+      return 'eth';
+    default:
+      return coin;
+  }
 }
