@@ -4,6 +4,7 @@ import * as Crypto from '../../utils/crypto';
 import { AddressFormat } from '../baseCoin/enum';
 import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from './iface';
 import { HDNode, ECPair } from 'bitgo-utxo-lib';
+import keccak256 from 'keccak256';
 
 const DEFAULT_SEED_SIZE_BYTES = 16;
 
@@ -110,10 +111,22 @@ export class KeyPair {
   /**
    * Get a public address
    *
-   * @param format
    */
-  getAddress(format?: AddressFormat): string {
-    const { pub } = this.getKeys(); //TODO: Implement get address from prv and pub
-    return pub;
+    getAddress():string{
+    var EC = require('elliptic').ec;
+    var ec = new EC('secp256k1');
+      
+    var privateKey=this.getKeys().prv;
+     
+    var G = ec.g; // Generator point
+    var pubPoint=G.mul(privateKey); // EC multiplication to determine public point
+    var x = pubPoint.getX().toBuffer(); //32 bit x co-ordinate of public point
+    var y = pubPoint.getY().toBuffer(); //32 bit y co-ordinate of public point 
+    
+    var publicKey =Buffer.concat([x,y])
+    const address = keccak256(publicKey) // keccak256 hash of  publicKey
+    const buf2 = Buffer.from(address, 'hex');
+    const ethAddress = "0x"+buf2.slice(-20).toString('hex');
+    return ethAddress;
   }
 }

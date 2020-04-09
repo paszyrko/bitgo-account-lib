@@ -14,17 +14,19 @@ import {
   intToBuffer,
   toBuffer,
   bufferToInt,
-  getFieldValue
+  getFieldValue,
 } from '../../../../src/coin/eth/utils';
+
 
 const STRING_HEX = '0xa43f0BDd451E39C7AF20426f43589DEFAd4335E6';
 const STRING_NO_HEX = 'a43f0BDd451E39C7AF20426f43589DEFAd4335E6';
 const STRING_ZEROS = '0x000f0BDd451E39C7AF20426f43589DEFAd4335E6'
 const STRING_WITHOUT_ZEROS = 'f0BDd451E39C7AF20426f43589DEFAd4335E6'
 const ARRAY = ['1', '2', '3'];
-const FIELD = { allowZero: false, allowLess: true, length: 4, name: 'gasLimit' };
+const FIELD = { allowZero: false, allowLess: true, length: 64, name: '' };
 const BN_ = new BN('18446744073709551615'); 
 const BUFFER = new Buffer(['04','00']);
+
 
 describe('isValidAddress', function() {
   it('should return valid result', async () => {
