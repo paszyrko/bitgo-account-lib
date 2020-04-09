@@ -10,8 +10,8 @@ import Web3 from 'web3';
 import _ from 'underscore';
 
 export type ByteArray = number[];
-const walletSimpleByteCode = 'contractBytecode';
-const walletSimpleAbi = [];
+const walletSimpleByteCode = '0x1'; //TODO: Replace with the actual bytecode
+const walletSimpleAbi = []; // Replace with the actual simple ABI
 const web3 = new Web3('https://public-node.testnet.rsk.co'); //TODO: This hardcoded server address will be removed
 
 /**
@@ -38,9 +38,9 @@ export async function sign(transactionData: TxData, keyPair: KeyPair): Promise<s
  */
 function formatTransaction(transactionData: TxData): TxData {
   return {
-    gasLimit: toHex(transactionData.gasLimit),
-    gasPrice: toHex(transactionData.gasPrice),
-    nonce: toHex(transactionData.nonce),
+    gasLimit: web3.utils.toHex(transactionData.gasLimit as number),
+    gasPrice: web3.utils.toHex(transactionData.gasPrice as number),
+    nonce: web3.utils.toHex(transactionData.nonce as number),
     data: transactionData.data,
   };
 }
@@ -247,7 +247,7 @@ export function intToHex(i: any): string {
  */
 export function toHex(i: any): string {
   if (isValidAddress(i)) {
-    return '0x' + i.toLowerCase().replace(/^0x/i);
+    return '0x' + i.toLowerCase().replace(/^0x/i, '');
   }
 
   if (Buffer.isBuffer(i)) {
