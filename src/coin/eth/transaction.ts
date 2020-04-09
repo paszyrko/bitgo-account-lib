@@ -67,7 +67,7 @@ export class Transaction extends BaseTransaction {
     if (!this._encodedTransaction) {
       throw new InvalidTransactionError('Missing encoded transaction');
     }
-    return this._encodedTransaction;
+    return '0x' + this._encodedTransaction;
   }
 
   /** @inheritdoc */

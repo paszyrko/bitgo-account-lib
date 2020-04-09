@@ -111,22 +111,23 @@ export class KeyPair {
   /**
    * Get a public address
    *
+   * @returns {string} The address derived from the private key
    */
-    getAddress():string{
-    var EC = require('elliptic').ec;
-    var ec = new EC('secp256k1');
-      
-    var privateKey=this.getKeys().prv;
-     
-    var G = ec.g; // Generator point
-    var pubPoint=G.mul(privateKey); // EC multiplication to determine public point
-    var x = pubPoint.getX().toBuffer(); //32 bit x co-ordinate of public point
-    var y = pubPoint.getY().toBuffer(); //32 bit y co-ordinate of public point 
-    
-    var publicKey =Buffer.concat([x,y])
-    const address = keccak256(publicKey) // keccak256 hash of  publicKey
+  getAddress(): string {
+    const EC = require('elliptic').ec;
+    const ec = new EC('secp256k1');
+
+    const privateKey = this.getKeys().prv;
+
+    const G = ec.g; // Generator point
+    const pubPoint = G.mul(privateKey); // EC multiplication to determine public point
+    const x = pubPoint.getX().toBuffer(); //32 bit x co-ordinate of public point
+    const y = pubPoint.getY().toBuffer(); //32 bit y co-ordinate of public point
+
+    const publicKey = Buffer.concat([x, y]);
+    const address = keccak256(publicKey); // keccak256 hash of  publicKey
     const buf2 = Buffer.from(address, 'hex');
-    const ethAddress = "0x"+buf2.slice(-20).toString('hex');
+    const ethAddress = '0x' + buf2.slice(-20).toString('hex');
     return ethAddress;
   }
 }

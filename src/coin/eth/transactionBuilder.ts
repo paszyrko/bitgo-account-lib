@@ -56,7 +56,6 @@ export class TransactionBuilder extends BaseTransactionBuilder {
 
     // Build and sign a new transaction based on the latest changes
     if (this._sourceKeyPair && this._sourceKeyPair.getKeys().prv) {
-      console.log('DEBUG: Trying to sign');
       await this.transaction.sign(this._sourceKeyPair);
     }
     return this.transaction;
