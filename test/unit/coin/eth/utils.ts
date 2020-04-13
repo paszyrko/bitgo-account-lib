@@ -1,5 +1,6 @@
 import should from 'should';
 import BN from 'bn.js';
+import { walletSimpleByteCode } from '../../../../src/coin/eth/walletUtil';
 import {
   padToEven,
   isHexPrefixed,
@@ -13,6 +14,7 @@ import {
   getFieldValue,
   isValidBlockHash,
   isValidAddress,
+  getContractData,
 } from '../../../../src/coin/eth/utils';
 
 const STRING_HEX = '0xa43f0BDd451E39C7AF20426f43589DEFAd4335E6';
@@ -21,6 +23,21 @@ const ARRAY = ['1', '2', '3'];
 
 const FIELD = { allowZero: false, allowLess: true, length: 42, name: '' };
 const BN_ = new BN('dead', 16);
+
+describe('getContractData', function() {
+  it('should return valid data', async () => {
+    const args = [
+      '0x2fa96fca36dd9d646AC8a4e0C19b4D3a0Dc7e456',
+      '0xBa8eA9C3729686d7DB120efCfC81cD020C8DC1CB',
+      '0xc37825D368eC3F50a1505542d8fFB25f7b6288f2',
+    ];
+    const contractData = getContractData(args);
+    const expectedContractData =
+      walletSimpleByteCode +
+      '000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000030000000000000000000000002fa96fca36dd9d646ac8a4e0c19b4d3a0dc7e456000000000000000000000000ba8ea9c3729686d7db120efcfc81cd020c8dc1cb000000000000000000000000c37825d368ec3f50a1505542d8ffb25f7b6288f2';
+    should.equal(contractData, expectedContractData);
+  });
+});
 
 describe('isValidAddress', function() {
   it('should return valid result', async () => {

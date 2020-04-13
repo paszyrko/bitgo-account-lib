@@ -58,6 +58,13 @@ export interface Account {
   };
 }
 
+export interface FieldStruct {
+  components?: any;
+  name: string;
+  inputs?: any;
+  type: string;
+}
+
 export interface ParsedTransaction {
   branch: string;
   contents: Operation[];

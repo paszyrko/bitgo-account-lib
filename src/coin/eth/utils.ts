@@ -2,14 +2,12 @@ import { Buffer } from 'buffer';
 import assert from 'assert';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
-import Web3 from 'web3';
 import _ from 'underscore';
+import { walletSimpleByteCode, walletSimpleConstructor } from './walletUtil';
+import { encodeParameters } from './abiCoder';
 import { FieldData } from './iface';
 
 export type ByteArray = number[];
-const walletSimpleByteCode = 'contractBytecode';
-const walletSimpleAbi = [];
-const web3 = new Web3('https://public-node.testnet.rsk.co'); //TODO: This hardcoded server address will be removed
 
 /**
  * Signs the transaction using the Eth elliptic curve
@@ -28,13 +26,9 @@ export async function sign(): Promise<void> {
  * @returns {string} - the smart contract encoded data
  */
 export function getContractData(args: string[]): string {
-  const contract = new web3.eth.Contract(walletSimpleAbi);
-  const contractToDeploy = contract.deploy({
-    data: walletSimpleByteCode,
-    arguments: args,
-  });
-
-  return contractToDeploy.encodeABI();
+  const params = [args];
+  const resultEncodedParameters = encodeParameters(walletSimpleConstructor, params).replace('0x', '');
+  return walletSimpleByteCode + resultEncodedParameters;
 }
 
 /**
@@ -104,7 +98,7 @@ const SHA3_NULL_S = '0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045
 /**
  * @param value
  */
-function sha3(value: any): string {
+export function sha3(value: any): string {
   if (BN.isBN(value)) {
     value = value.toString();
   }
@@ -246,6 +240,17 @@ export function toBuffer(v: any): Buffer {
     }
   }
   return v;
+}
+
+/**
+ * Returns true if object is BigNumber, otherwise false
+ *
+ * @function isBigNumber
+ * @param {object} object
+ * @returns {boolean}
+ */
+export function isBigNumber(object: any) {
+  return object && object.constructor && object.constructor.name === 'BigNumber';
 }
 
 /**

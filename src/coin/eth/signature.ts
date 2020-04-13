@@ -37,12 +37,7 @@ export class Transaction {
    *
    * @param data - A transaction can be initialized with its rlp representation, an array containing
    * the value of its fields in order, or an object containing them by name.
-   * @param chainId
-   * @param opts - The transaction's options, used to indicate the chain and hardfork the
-   * transactions belongs to.
-   * @note Transaction objects implement EIP155 by default. To disable it, use the constructor's
-   * second parameter to set a chain and hardfork before EIP155 activation (i.e. before Spurious
-   * Dragon.)
+   * @param chainId chain id
    * @example
    * ```js
    * const txData = {
