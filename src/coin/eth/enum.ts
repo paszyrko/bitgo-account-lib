@@ -10,8 +10,4 @@ export enum ContractType {
    * This is the multi-sig initialization contract.
    */
   WalletInitialization,
-  /**
-   * This is the multi-sig contract configuration.
-   */
-  WalletConfiguration,
 }

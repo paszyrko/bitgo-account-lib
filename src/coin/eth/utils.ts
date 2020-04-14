@@ -7,7 +7,7 @@ import { KeyPair } from './keyPair';
 import { walletSimpleByteCode, walletSimpleAbi, rskDomain } from './walletUtil';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
-import Web3 from 'web3';
+import Web3 from 'web3'; //TODO: Remove this dependency when it's unused
 import _ from 'underscore';
 
 export type ByteArray = number[];
