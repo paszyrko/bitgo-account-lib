@@ -4,15 +4,14 @@ import { SigningError } from '../baseCoin/errors';
 import { FieldData, TxData } from './iface';
 import { signTx } from './signature';
 import { KeyPair } from './keyPair';
+import { walletSimpleByteCode, walletSimpleAbi, rskDomain } from './walletUtil';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
 import Web3 from 'web3';
 import _ from 'underscore';
 
 export type ByteArray = number[];
-const walletSimpleByteCode = '0x1'; //TODO: Replace with the actual bytecode
-const walletSimpleAbi = []; // Replace with the actual simple ABI
-const web3 = new Web3('https://public-node.testnet.rsk.co'); //TODO: This hardcoded server address will be removed
+const web3 = new Web3(rskDomain);
 
 /**
  * Signs the transaction using the Eth elliptic curve
@@ -25,8 +24,6 @@ export async function sign(transactionData: TxData, keyPair: KeyPair): Promise<s
     throw new SigningError('Missing private key');
   }
   const chainId = transactionData.chainId != undefined ? bufferToInt(transactionData.chainId as Buffer) : 0;
-  console.log('Chain Id is: ', chainId);
-  console.log('Private key ', keyPair.getKeys().prv);
   const privateKey = Buffer.from(keyPair.getKeys().prv as string, 'hex');
   return signTx(formatTransaction(transactionData), chainId, privateKey);
 }
@@ -48,16 +45,15 @@ function formatTransaction(transactionData: TxData): TxData {
 /**
  * Returns the smart contract encoded data
  *
- * @param {string[]} args - the contract signers
+ * @param {string[]} addresses - the contract signers
  * @returns {string} - the smart contract encoded data
  */
-export function getContractData(args: string[]): string {
+export function getContractData(addresses: string[]): string {
   const contract = new web3.eth.Contract(walletSimpleAbi);
   const contractToDeploy = contract.deploy({
     data: walletSimpleByteCode,
-    arguments: args,
+    arguments: [addresses],
   });
-
   return contractToDeploy.encodeABI();
 }
 
@@ -97,7 +93,6 @@ function checkAddressChecksum(address: string): boolean {
       (parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i]) ||
       (parseInt(addressHash[i], 16) <= 7 && address[i].toLowerCase() !== address[i])
     ) {
-      console.log('Pablo 5');
       return false;
     }
   }
@@ -177,7 +172,6 @@ function hexToBytes(hex: any): ByteArray {
  */
 export function isValidBlockHash(hash: string): boolean {
   //TODO: implement Eth block hash validation
-  console.log(hash);
   return true;
 }
 
