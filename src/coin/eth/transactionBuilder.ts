@@ -168,7 +168,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
   /**
    * Set one of the owners of the multisig wallet.
    *
-   * @param {string} address A Eth public key
+   * @param {string} address An Ethereum address
    */
   owner(address: string): void {
     if (this._type !== TransactionType.WalletInitialization) {
