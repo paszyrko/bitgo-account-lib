@@ -1,9 +1,9 @@
 import { Buffer } from 'buffer';
+import { TxData, SigData } from './iface';
+import { stripZeros, getFieldValue, toBuffer, bufferToInt } from './utils';
 import createKeccakHash from 'keccak';
 import { encode } from 'rlp';
 import secp256k1 from 'secp256k1';
-import { TxData, SigData } from './iface';
-import { stripZeros, getFieldValue, toBuffer, bufferToInt } from './utils';
 
 /**
  * @param data
