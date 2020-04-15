@@ -178,7 +178,7 @@ export class Transaction {
     const sig = this._ecsign(msgHash, privateKey);
 
     if (this._implementsEIP155() && sig.v !== undefined) {
-      sig.v += this._getChainId() * 2 + 8;
+      sig.v = Number(sig.v) + this._getChainId() * 2 + 8;
     }
 
     Object.assign(this, sig);

@@ -94,22 +94,23 @@ export interface SigData {
   /**
    * EC recovery ID.
    */
-  v?: number;
+  v?: BufferLike;
 
   /**
    * EC signature parameter.
    */
-  r?: number;
+  r?: BufferLike;
 
   /**
    * EC signature parameter.
    */
-  s?: number;
+  s?: BufferLike;
 }
+
 /**
  * A transaction's data.
  */
-export interface TxData {
+export interface TxData extends SigData {
   /**
    * The transaction's gas limit.
    */
@@ -139,21 +140,6 @@ export interface TxData {
    * This will contain the data of the message or the init of a contract
    */
   data?: BufferLike;
-
-  /**
-   * EC recovery ID.
-   */
-  v?: BufferLike;
-
-  /**
-   * EC signature parameter.
-   */
-  r?: BufferLike;
-
-  /**
-   * EC signature parameter.
-   */
-  s?: BufferLike;
 
   /**
    * The amount of Ether sent.
