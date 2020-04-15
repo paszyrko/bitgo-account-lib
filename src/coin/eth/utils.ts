@@ -8,7 +8,6 @@ import { walletSimpleByteCode, walletSimpleAbi, rskDomain } from './walletUtil';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
 import Web3 from 'web3'; //TODO: Remove this dependency when it's unused
-import _ from 'underscore';
 
 export type ByteArray = number[];
 const web3 = new Web3(rskDomain);
@@ -107,7 +106,7 @@ function checkAddressChecksum(address: string): boolean {
  * @returns {boolean}
  */
 function isHexStrict(hex: any): boolean {
-  return (_.isString(hex) || _.isNumber(hex)) && /^(-)?0x[0-9a-f]*$/i.test(hex);
+  return (typeof hex === 'string' || !isNaN(Number(hex))) && /^(-)?0x[0-9a-f]*$/i.test(hex);
 }
 
 /**
@@ -248,7 +247,7 @@ export function toHex(i: any): string {
     return '0x' + i.toString('hex');
   }
 
-  if (_.isString(i)) {
+  if (typeof i === 'string') {
     if (i.indexOf('0x') === 0 || i.indexOf('0X') === 0) {
       return i;
     }
