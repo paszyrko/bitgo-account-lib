@@ -4,13 +4,13 @@ import { SigningError } from '../baseCoin/errors';
 import { FieldData, TxData } from './iface';
 import { signTx } from './signature';
 import { KeyPair } from './keyPair';
-import { walletSimpleByteCode, walletSimpleAbi, rskDomain } from './walletUtil';
+import { walletSimpleByteCode, walletSimpleAbi } from './walletUtil';
 import keccak256 from 'keccak256';
 import BN from 'bn.js';
 import Web3 from 'web3'; //TODO: Remove this dependency when it's unused
 
 export type ByteArray = number[];
-const web3 = new Web3(rskDomain);
+const web3 = new Web3();
 
 /**
  * Signs the transaction using the Eth elliptic curve
