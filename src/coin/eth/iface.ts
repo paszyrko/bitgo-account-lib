@@ -49,27 +49,6 @@ export interface Fee extends BaseFee {
   gasLimit: string;
 }
 
-export interface Account {
-  publicKey: string;
-  privateKey: string;
-  address: {
-    hex: string;
-  };
-}
-
-export interface ParsedTransaction {
-  branch: string;
-  contents: Operation[];
-}
-
-export interface Operation {
-  to: string;
-  dataToSign?: string;
-  gas_limit: string;
-  gas_price: string;
-  counter?: string;
-}
-
 /**
  * Any object that can be transformed into a `Buffer`
  */

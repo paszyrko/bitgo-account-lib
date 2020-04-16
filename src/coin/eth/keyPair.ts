@@ -4,7 +4,7 @@ import * as Crypto from '../../utils/crypto';
 import { AddressFormat } from '../baseCoin/enum';
 import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from './iface';
 import { HDNode, ECPair } from 'bitgo-utxo-lib';
-import keccak256 from 'keccak256';
+import Keccak from 'keccak';
 
 const DEFAULT_SEED_SIZE_BYTES = 16;
 
@@ -115,7 +115,8 @@ export class KeyPair {
    */
   getAddress(): string {
     const publicKey = Buffer.from(this.getKeys().pub.slice(2), 'hex'); //first two characters identify a public key
-    const address = keccak256(publicKey); // keccak256 hash of  publicKey
+    const hash = new Keccak('keccak256');
+    const address = hash.update(publicKey).digest(); // keccak256 hash of  publicKey
     const buf2 = Buffer.from(address, 'hex');
     const ethAddress = '0x' + buf2.slice(-20).toString('hex');
     return ethAddress;
