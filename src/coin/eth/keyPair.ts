@@ -1,8 +1,8 @@
+import { HDNode, ECPair } from 'bitgo-utxo-lib';
+import keccak from 'keccak';
 import { DefaultKeys, ExtendedKeys } from '../baseCoin/iface';
 import * as Crypto from '../../utils/crypto';
 import { isPrivateKey, isPublicKey, KeyPairOptions } from '../baseCoin/iface';
-import { HDNode, ECPair } from 'bitgo-utxo-lib';
-import Keccak from 'keccak';
 
 /**
  * Ethereum keys and address management.
@@ -16,7 +16,7 @@ export class KeyPair {
   /**
    * Public constructor. By default, creates a key pair with a random master seed.
    *
-   * @param source Either a master seed, a private key (extended or raw), or a public key
+   * @param {KeyPairOptions} source Either a master seed, a private key (extended or raw), or a public key
    *     (extended, compressed, or uncompressed)
    */
   constructor(source?: KeyPairOptions) {
@@ -36,7 +36,7 @@ export class KeyPair {
   /**
    * Build a Hierarchical Deterministic node or an ECPair from a private key.
    *
-   * @param prv An extended or raw private key
+   * @param {string} prv An extended or raw private key
    */
   private recordKeysFromPrivateKey(prv: string): void {
     if (Crypto.isValidXprv(prv)) {
@@ -68,7 +68,7 @@ export class KeyPair {
   /**
    * Ethereum default keys format is raw private and uncompressed public key
    *
-   * @returns The keys in the protocol default key format
+   * @returns {DefaultKeys} The keys in the protocol default key format
    */
   getKeys(): DefaultKeys {
     const result: DefaultKeys = {
@@ -111,8 +111,10 @@ export class KeyPair {
    */
   getAddress(): string {
     const publicKey = Buffer.from(this.getKeys().pub.slice(2), 'hex'); //first two characters identify a public key
-    const hash = new Keccak('keccak256');
-    const address = hash.update(publicKey).digest(); // keccak256 hash of  publicKey
+    const pk = publicKey;
+    const address = keccak('keccak256')
+      .update(pk)
+      .digest('hex');
     const buf2 = Buffer.from(address, 'hex');
     const ethAddress = '0x' + buf2.slice(-20).toString('hex');
     return ethAddress;
