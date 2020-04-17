@@ -1,10 +1,10 @@
 import * as crypto from 'crypto';
-import { HDNode, ECPair } from 'bitgo-utxo-lib';
 import { DefaultKeys, ExtendedKeys } from '../baseCoin/iface';
 import { AddressFormat } from '../baseCoin/enum';
 import * as Crypto from '../../utils/crypto';
+import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from '../baseCoin/iface';
 import * as Utils from './utils';
-import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from './iface';
+import { HDNode, ECPair } from 'bitgo-utxo-lib';
 
 const DEFAULT_SEED_SIZE_BYTES = 16;
 
@@ -61,7 +61,7 @@ export class KeyPair {
   /**
    * Build a Hierarchical Deterministic node or an ECPair from a public key.
    *
-   * @param {String} pub - An extended, compressed, or uncompressed public key
+   * @param {string} pub - An extended, compressed, or uncompressed public key
    */
   private recordKeysFromPublicKey(pub: string): void {
     if (Crypto.isValidXpub(pub)) {
@@ -76,7 +76,8 @@ export class KeyPair {
 
   /**
    * Tron default keys format is raw private and uncompressed public key
-   * @return The keys in the protocol default key format
+   *
+   * @returns The keys in the protocol default key format
    */
   getKeys(): DefaultKeys {
     const result: DefaultKeys = {
@@ -114,6 +115,8 @@ export class KeyPair {
 
   /**
    * Get a public address in the specified format, or in base58 if none is provided.
+   *
+   * @param format
    */
   getAddress(format?: AddressFormat): string {
     const { pub } = this.getKeys();
@@ -132,8 +135,9 @@ export class KeyPair {
   /**
    * Generates a signature for an arbitrary string with the current private key using keccak256
    * hashing algorithm. Throws if there is no private key.
+   *
    * @param {string} message to produce a signature for
-   * @return The signature as a buffer
+   * @returns The signature as a buffer
    */
   signMessage(message: string): Buffer {
     const messageToSign = Buffer.from(message).toString('hex');
@@ -147,9 +151,10 @@ export class KeyPair {
 
   /**
    * Verifies a message signature using the current public key.
+   *
    * @param {string} message signed
    * @param {Buffer} signature to verify
-   * @return True if the message was signed with the current key pair
+   * @returns True if the message was signed with the current key pair
    */
   verifySignature(message: string, signature: Buffer): boolean {
     const messageToVerify = Buffer.from(message).toString('hex');

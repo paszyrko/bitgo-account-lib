@@ -1,12 +1,8 @@
-import * as crypto from 'crypto';
 import { DefaultKeys, ExtendedKeys } from '../baseCoin/iface';
 import * as Crypto from '../../utils/crypto';
-import { AddressFormat } from '../baseCoin/enum';
-import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from './iface';
+import { isPrivateKey, isPublicKey, KeyPairOptions } from '../baseCoin/iface';
 import { HDNode, ECPair } from 'bitgo-utxo-lib';
 import Keccak from 'keccak';
-
-const DEFAULT_SEED_SIZE_BYTES = 16;
 
 /**
  * Ethereum keys and address management.
