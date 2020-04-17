@@ -42,14 +42,13 @@ export class TransactionBuilder extends BaseTransactionBuilder {
 
   /** @inheritdoc */
   protected async buildImplementation(): Promise<BaseTransaction> {
-    if (this._type != TransactionType.WalletInitialization) {
-      throw new BuildTransactionError('Unsupported transaction type');
-    }
     let transactionData;
     switch (this._type) {
       case TransactionType.WalletInitialization:
         transactionData = this.buildWalletInitializationTransaction();
         break;
+      default:
+        throw new BuildTransactionError('Unsupported transaction type');
     }
     this.transaction.setTransactionType(this._type);
     this.transaction.setTransactionData(transactionData);
@@ -80,6 +79,8 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     if (this._sourceKeyPair) {
       throw new SigningError('Cannot sign multiple times a non send-type transaction');
     }
+    // Signing the transaction is an async operation, so save the source and leave the actual
+    // signing for the build step
     this._sourceKeyPair = signer;
     return this.transaction;
   }
