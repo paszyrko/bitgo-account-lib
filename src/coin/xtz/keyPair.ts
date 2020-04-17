@@ -1,10 +1,10 @@
 import * as crypto from 'crypto';
-import { HDNode, ECPair } from 'bitgo-utxo-lib';
-import blake2b from 'blake2b';
 import { DefaultKeys, ExtendedKeys } from '../baseCoin/iface';
 import * as CryptoUtils from '../../utils/crypto';
+import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from '../baseCoin/iface';
 import * as Utils from './utils';
-import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from './iface';
+import blake2b from 'blake2b';
+import { HDNode, ECPair } from 'bitgo-utxo-lib';
 
 const DEFAULT_SEED_SIZE_BYTES = 16;
 
