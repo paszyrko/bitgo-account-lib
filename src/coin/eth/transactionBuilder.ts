@@ -1,12 +1,13 @@
+import { isValidAddress } from 'ethereumjs-util';
+import { BaseCoin as CoinConfig } from '@bitgo/statics/dist/src/base';
+import BigNumber from 'bignumber.js';
 import { BaseTransaction, BaseTransactionBuilder, TransactionType } from '../baseCoin';
 import { BaseAddress, BaseKey } from '../baseCoin/iface';
 import { Transaction } from '../eth';
 import { BuildTransactionError, SigningError } from '../baseCoin/errors';
 import { KeyPair } from './keyPair';
 import { Fee, TxData } from './iface';
-import { isValidAddress, getContractData } from './utils';
-import { BaseCoin as CoinConfig } from '@bitgo/statics/dist/src/base';
-import BigNumber from 'bignumber.js';
+import { getContractData } from './utils';
 
 const DEFAULT_M = 3;
 
