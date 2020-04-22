@@ -1,13 +1,11 @@
 import { Buffer } from 'buffer';
-import { Transaction } from 'ethereumjs-tx';
 import EthereumCommon from 'ethereumjs-common';
-import Web3 from 'web3'; //TODO: Remove this dependency when it's unused
+import { Transaction } from 'ethereumjs-tx';
 import { SigningError } from '../baseCoin/errors';
 import { TxData } from './iface';
 import { KeyPair } from './keyPair';
-import { walletSimpleByteCode, walletSimpleAbi } from './walletUtil';
-
-const web3 = new Web3();
+import { walletSimpleConstructor, walletSimpleByteCode } from './walletUtil';
+import { encodeParameters } from './abiCoder';
 
 /**
  * Signs the transaction using the Eth elliptic curve
@@ -58,12 +56,9 @@ function formatTransaction(transactionData: TxData): TxData {
  * @returns {string} - the smart contract encoded data
  */
 export function getContractData(addresses: string[]): string {
-  const contract = new web3.eth.Contract(walletSimpleAbi);
-  const contractToDeploy = contract.deploy({
-    data: walletSimpleByteCode,
-    arguments: [addresses],
-  });
-  return contractToDeploy.encodeABI();
+  const params = [addresses];
+  const resultEncodedParameters = encodeParameters(walletSimpleConstructor, params).replace('0x', '');
+  return walletSimpleByteCode + resultEncodedParameters;
 }
 
 /**
@@ -75,4 +70,15 @@ export function getContractData(addresses: string[]): string {
 export function isValidBlockHash(hash: string): boolean {
   console.log('Not implemented isValidBlockHash ', hash);
   return true;
+}
+
+/**
+ * Returns whether or not the value is an object
+ *
+ * @param {*} value The value to check.
+ * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+ */
+export function isObject(value: any): boolean {
+  const type = typeof value;
+  return value != null && (type === 'object' || type === 'function');
 }
