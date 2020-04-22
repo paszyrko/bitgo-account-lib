@@ -82,6 +82,13 @@ export interface TxData extends SigData {
   value?: BufferLike;
 }
 
+export interface FieldStruct {
+  components?: any;
+  name: string;
+  inputs?: any;
+  type: string;
+}
+
 /**
  * The data of a fake (self-signing) transaction.
  */
