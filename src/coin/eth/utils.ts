@@ -22,8 +22,8 @@ export async function sign(transactionData: TxData, keyPair: KeyPair): Promise<s
     'ropsten',
     {
       name: 'testnet',
-      networkId: 31,
-      chainId: 31,
+      networkId: transactionData.chainId as number,
+      chainId: transactionData.chainId as number,
     },
     'petersburg',
   );
