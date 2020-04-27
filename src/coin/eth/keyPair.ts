@@ -1,7 +1,7 @@
+import { pubToAddress } from 'ethereumjs-util';
 import { DefaultKeys } from '../baseCoin/iface';
 import { isPrivateKey, isPublicKey, KeyPairOptions } from '../baseCoin/iface';
 import { BaseKeyPair } from '../baseCoin/baseKeyPair';
-import keccak from 'keccak';
 
 /**
  * Ethereum keys and address management.
@@ -52,16 +52,11 @@ export class KeyPair extends BaseKeyPair {
   /**
    * Get an Ethereum public address
    *
-   * @returns {string} The address derived from the private key or public key
+   * @returns {string} The address derived from the public key
    */
   getAddress(): string {
     const publicKey = Buffer.from(this.getKeys().pub.slice(2), 'hex'); //first two characters identify a public key
-    const pk = publicKey;
-    const address = keccak('keccak256')
-      .update(pk)
-      .digest('hex');
-    const buf2 = Buffer.from(address, 'hex');
-    const ethAddress = '0x' + buf2.slice(-20).toString('hex');
-    return ethAddress;
+    return '0x' + pubToAddress(publicKey).toString('hex');
   }
 }
+src / coin / eth / keyPair.ts;
