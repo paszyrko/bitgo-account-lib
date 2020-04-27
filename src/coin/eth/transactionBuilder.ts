@@ -120,6 +120,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
    */
   chainId(chainId: number): void {
     this._chainId = chainId;
+    // TODO: Infer it from coinConfig
   }
 
   /**
@@ -187,7 +188,6 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     }
     this._walletOwnerAddresses.push(address);
   }
-  //endregion
 
   /**
    * Build a transaction for a generic multisig contract.
@@ -203,6 +203,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
       data: getContractData(this._walletOwnerAddresses),
     };
   }
+  //endregion
 
   /** @inheritdoc */
   protected get transaction(): Transaction {
