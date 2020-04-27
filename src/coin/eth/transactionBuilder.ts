@@ -120,6 +120,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
    */
   chainId(chainId: number): void {
     this._chainId = chainId;
+    // TODO: Infer it from coinConfig
   }
 
   /**
