@@ -59,4 +59,3 @@ export class KeyPair extends BaseKeyPair {
     return '0x' + pubToAddress(publicKey).toString('hex');
   }
 }
-src / coin / eth / keyPair.ts;
