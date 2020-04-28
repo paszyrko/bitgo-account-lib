@@ -1,4 +1,5 @@
 import { Buffer } from 'buffer';
+import { isValidAddress } from 'ethereumjs-util';
 import EthereumCommon from 'ethereumjs-common';
 import { Transaction } from 'ethereumjs-tx';
 import { SigningError } from '../baseCoin/errors';
@@ -42,9 +43,9 @@ export async function sign(transactionData: TxData, keyPair: KeyPair): Promise<s
  */
 function formatTransaction(transactionData: TxData): TxData {
   return {
-    gasLimit: '0x' + Number(transactionData.gasLimit as number).toString(16),
-    gasPrice: '0x' + Number(transactionData.gasPrice as number).toString(16),
-    nonce: '0x' + Number(transactionData.nonce as number).toString(16),
+    gasLimit: '0x' + Number(transactionData.gasLimit).toString(16),
+    gasPrice: '0x' + Number(transactionData.gasPrice).toString(16),
+    nonce: '0x' + Number(transactionData.nonce).toString(16),
     data: transactionData.data,
   };
 }
@@ -70,6 +71,16 @@ export function getContractData(addresses: string[]): string {
 export function isValidBlockHash(hash: string): boolean {
   console.log('Not implemented isValidBlockHash ', hash);
   return true;
+}
+
+/**
+ * Returns whether or not the string is a valid Eth address
+ *
+ * @param {string} address - the tx hash to validate
+ * @returns {boolean} - the validation result
+ */
+export function isValidEthAddress(address: string): boolean {
+  return isValidAddress(address);
 }
 
 /**

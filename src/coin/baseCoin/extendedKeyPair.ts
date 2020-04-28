@@ -1,12 +1,12 @@
+import { HDNode, ECPair } from 'bitgo-utxo-lib';
 import * as Crypto from '../../utils/crypto';
 import { KeyPairOptions, ExtendedKeys } from './iface';
 import { AddressFormat } from './enum';
-import { HDNode, ECPair } from 'bitgo-utxo-lib';
 
 /**
  * Base keys and address management.
  */
-export abstract class BaseKeyPair {
+export abstract class ExtendedKeyPair {
   // Implementation of the HD protocol (BIP32). Only available when creating a KeyPair from a seed,
   // or extended keys
   protected hdNode?: HDNode;

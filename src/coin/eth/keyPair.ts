@@ -1,12 +1,12 @@
 import { pubToAddress } from 'ethereumjs-util';
 import { DefaultKeys } from '../baseCoin/iface';
 import { isPrivateKey, isPublicKey, KeyPairOptions } from '../baseCoin/iface';
-import { BaseKeyPair } from '../baseCoin/baseKeyPair';
+import { ExtendedKeyPair } from '../baseCoin/extendedKeyPair';
 
 /**
  * Ethereum keys and address management.
  */
-export class KeyPair extends BaseKeyPair {
+export class KeyPair extends ExtendedKeyPair {
   /**
    * Public constructor. By default, creates a key pair with a random master seed.
    *

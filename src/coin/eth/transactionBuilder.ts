@@ -1,4 +1,3 @@
-import { isValidAddress } from 'ethereumjs-util';
 import { BaseCoin as CoinConfig } from '@bitgo/statics/dist/src/base';
 import BigNumber from 'bignumber.js';
 import { BaseTransaction, BaseTransactionBuilder, TransactionType } from '../baseCoin';
@@ -7,7 +6,7 @@ import { Transaction } from '../eth';
 import { BuildTransactionError, SigningError } from '../baseCoin/errors';
 import { KeyPair } from './keyPair';
 import { Fee, TxData } from './iface';
-import { getContractData } from './utils';
+import { getContractData, isValidEthAddress } from './utils';
 
 const DEFAULT_M = 3;
 
@@ -88,7 +87,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
 
   /** @inheritdoc */
   validateAddress(address: BaseAddress): void {
-    if (!isValidAddress(address.address)) {
+    if (!isValidEthAddress(address.address)) {
       throw new BuildTransactionError('Invalid address ' + address.address);
     }
   }
@@ -180,7 +179,7 @@ export class TransactionBuilder extends BaseTransactionBuilder {
     if (this._walletOwnerAddresses.length >= DEFAULT_M) {
       throw new BuildTransactionError('A maximum of ' + DEFAULT_M + ' owners can be set for a multisig wallet');
     }
-    if (!isValidAddress(address)) {
+    if (!isValidEthAddress(address)) {
       throw new BuildTransactionError('Invalid address: ' + address);
     }
     if (this._walletOwnerAddresses.includes(address)) {
