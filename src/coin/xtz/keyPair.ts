@@ -1,18 +1,18 @@
 import * as crypto from 'crypto';
+import blake2b from 'blake2b';
+import { HDNode, ECPair } from 'bitgo-utxo-lib';
 import { DefaultKeys } from '../baseCoin/iface';
 import * as CryptoUtils from '../../utils/crypto';
 import { isPrivateKey, isPublicKey, isSeed, KeyPairOptions } from '../baseCoin/iface';
-import { BaseKeyPair } from '../baseCoin/baseKeyPair';
+import { ExtendedKeyPair } from '../baseCoin/extendedKeyPair';
 import * as Utils from './utils';
-import blake2b from 'blake2b';
-import { HDNode, ECPair } from 'bitgo-utxo-lib';
 
 const DEFAULT_SEED_SIZE_BYTES = 16;
 
 /**
  * Tezos keys and address management.
  */
-export class KeyPair extends BaseKeyPair {
+export class KeyPair extends ExtendedKeyPair {
   /**
    * Public constructor. By default, creates a key pair with a random master seed.
    *
