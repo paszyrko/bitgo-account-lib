@@ -1,10 +1,10 @@
 import { AbiCoder } from 'ethers/utils/abi-coder';
+import * as _ from 'lodash';
 import BN from 'bignumber.js';
 import { FieldStruct } from './iface';
-import { isObject } from './utils';
 
 const ethersAbiCoder = new AbiCoder(function(type, value) {
-  if (type.match(/^u?int/) && !Array.isArray(value) && (!isObject(value) || value.constructor.name !== 'BN')) {
+  if (type.match(/^u?int/) && !_.isArray(value) && (_.isObject(value) || value.constructor.name !== 'BN')) {
     return value.toString();
   }
   return value;
